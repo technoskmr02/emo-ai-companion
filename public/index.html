@@ -1,365 +1,2124 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-  >
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 
-  <title>EMO AI Companion</title>
+<title>EMO AI Companion V3</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
+<style>
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
 
-    html,
-    body {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      overflow: hidden;
-      background: #000;
-    }
+html,body{
+  width:100%;
+  height:100%;
+  margin:0;
+  overflow:hidden;
+  background:#000;
+}
 
-    body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: Arial, sans-serif;
-    }
+body{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:Arial,sans-serif;
+}
 
-    /* Main face area */
-    .face {
-      width: 100vw;
-      height: 100vh;
+.face{
+  width:100vw;
+  height:100vh;
+  background:#000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  position:relative;
+}
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
+.eyes{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:clamp(20px,6vw,55px);
+  padding:20px;
+}
 
-      background: #000;
-    }
+.eye{
+  width:clamp(70px,24vw,125px);
+  height:clamp(105px,34vw,165px);
 
-    /* Two eyes */
-    .eyes {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+  background:#168cff;
 
-      gap: clamp(22px, 6vw, 55px);
+  border-radius:28px;
 
-      width: 100%;
-      padding: 20px;
-    }
+  box-shadow:
+    0 0 10px rgba(22,140,255,.95),
+    0 0 28px rgba(22,140,255,.85),
+    0 0 65px rgba(22,140,255,.55);
 
-    /* EMO-style rounded rectangular LED eye */
-    .eye {
-      width: clamp(70px, 24vw, 125px);
-      height: clamp(105px, 34vw, 165px);
+  transform-origin:center;
 
-      background: #168cff;
+  transition:
+    width .25s ease,
+    height .25s ease,
+    border-radius .25s ease,
+    transform .25s ease,
+    opacity .2s ease,
+    filter .25s ease;
+}
 
-      border-radius: 28px;
 
-      box-shadow:
-        0 0 10px #168cff,
-        0 0 25px #168cff,
-        0 0 55px rgba(22, 140, 255, 0.75);
+/* =========================================================
+   BASIC
+========================================================= */
 
-      transition:
-        width 0.25s ease,
-        height 0.25s ease,
-        border-radius 0.25s ease,
-        transform 0.25s ease,
-        box-shadow 0.25s ease,
-        opacity 0.2s ease;
+.normal .eye{
+  animation:idleGlow 3s ease-in-out infinite;
+}
 
-      animation: idleGlow 2.5s ease-in-out infinite;
-    }
+@keyframes idleGlow{
+  0%,100%{filter:brightness(1)}
+  50%{filter:brightness(1.12)}
+}
 
-    /* Gentle idle glow */
-    @keyframes idleGlow {
-      0%, 100% {
-        opacity: 0.94;
-        filter: brightness(1);
-      }
 
-      50% {
-        opacity: 1;
-        filter: brightness(1.12);
-      }
-    }
+/* =========================================================
+   BLINK
+========================================================= */
 
-    /* Blink */
-    .blink .eye {
-      height: 12px;
-      border-radius: 10px;
-      transform: translateY(2px);
-    }
+.blink .eye{
+  height:8px;
+  border-radius:10px;
+}
 
-    /* Happy */
-    .happy .eye {
-      height: 85px;
-      border-radius: 35px 35px 22px 22px;
-    }
+.longBlink .eye{
+  height:5px;
+  border-radius:8px;
+}
 
-    /* Sad */
-    .sad .eye {
-      transform: rotate(-8deg);
-      border-radius: 35px 20px 30px 35px;
-    }
 
-    /* Angry */
-    .angry .eye:first-child {
-      transform: rotate(10deg);
-    }
+/* =========================================================
+   HAPPY
+========================================================= */
 
-    .angry .eye:last-child {
-      transform: rotate(-10deg);
-    }
+.happy .eye{
+  height:85px;
+  border-radius:35px 35px 20px 20px;
+  transform:translateY(5px);
+}
 
-    /* Surprised */
-    .surprised .eye {
-      width: clamp(85px, 27vw, 140px);
-      height: clamp(125px, 38vw, 180px);
-      border-radius: 35px;
-    }
 
-    /* Sleepy */
-    .sleepy .eye {
-      height: 45px;
-      border-radius: 25px;
-      opacity: 0.7;
-    }
+/* =========================================================
+   LAUGH
+========================================================= */
 
-    /* Listening */
-    .listening .eye {
-      animation:
-        listenPulse 0.9s ease-in-out infinite alternate;
-    }
+.laugh .eye{
+  height:55px;
+  border-radius:40px;
+  animation:laugh .35s ease-in-out infinite alternate;
+}
 
-    @keyframes listenPulse {
-      from {
-        transform: scaleY(0.9);
-        filter: brightness(1);
-      }
+@keyframes laugh{
+  from{transform:scaleY(.9)}
+  to{transform:scaleY(1.12)}
+}
 
-      to {
-        transform: scaleY(1.08);
-        filter: brightness(1.3);
-      }
-    }
 
-    /* Thinking */
-    .thinking .eye {
-      animation:
-        thinkingMove 1.2s ease-in-out infinite alternate;
-    }
+/* =========================================================
+   SAD
+========================================================= */
 
-    @keyframes thinkingMove {
-      from {
-        transform: translateY(-4px);
-      }
+.sad .eye:first-child{
+  transform:rotate(-8deg) translateY(5px);
+}
 
-      to {
-        transform: translateY(5px);
-      }
-    }
+.sad .eye:last-child{
+  transform:rotate(8deg) translateY(5px);
+}
 
-    /* Excited */
-    .excited .eye {
-      animation:
-        excitedBounce 0.45s ease-in-out infinite alternate;
-    }
+.sad .eye{
+  filter:brightness(.8);
+}
 
-    @keyframes excitedBounce {
-      from {
-        transform: translateY(-5px) scale(1);
-      }
 
-      to {
-        transform: translateY(5px) scale(1.06);
-      }
-    }
+/* =========================================================
+   ANGRY
+========================================================= */
 
-    /* Scared */
-    .scared .eye {
-      animation:
-        scaredShake 0.15s linear infinite;
-    }
+.angry .eye:first-child{
+  transform:rotate(10deg);
+}
 
-    @keyframes scaredShake {
-      0% {
-        transform: translateX(-3px);
-      }
+.angry .eye:last-child{
+  transform:rotate(-10deg);
+}
 
-      50% {
-        transform: translateX(3px);
-      }
+.angry .eye{
+  filter:brightness(.85);
+}
 
-      100% {
-        transform: translateX(-3px);
-      }
-    }
 
-    /* Speaking */
-    .speaking .eye {
-      animation:
-        speakPulse 0.55s ease-in-out infinite alternate;
-    }
+/* =========================================================
+   SURPRISED
+========================================================= */
 
-    @keyframes speakPulse {
-      from {
-        transform: scaleY(0.94);
-      }
+.surprised .eye{
+  width:clamp(85px,27vw,140px);
+  height:clamp(125px,38vw,185px);
+  border-radius:36px;
+  transform:scale(1.05);
+}
 
-      to {
-        transform: scaleY(1.05);
-      }
-    }
 
-    /* Starting animation */
-    .starting .eye {
-      opacity: 0;
-      transform: scaleY(0.1);
-    }
+/* =========================================================
+   SLEEPY
+========================================================= */
 
-    /* Mobile */
-    @media (max-width: 600px) {
-      .eyes {
-        gap: 24px;
-      }
+.sleepy .eye{
+  height:42px;
+  border-radius:25px;
+  opacity:.72;
+}
 
-      .eye {
-        border-radius: 24px;
-      }
-    }
 
-    /* Very small screens */
-    @media (max-width: 360px) {
-      .eyes {
-        gap: 18px;
-      }
+/* =========================================================
+   BORED
+========================================================= */
 
-      .eye {
-        width: 65px;
-        height: 100px;
-      }
-    }
-  </style>
+.bored .eye{
+  height:65px;
+  opacity:.68;
+  transform:translateY(10px);
+}
+
+
+/* =========================================================
+   THINKING
+========================================================= */
+
+.thinking .eye{
+  animation:thinking 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes thinking{
+  from{transform:translateY(-5px)}
+  to{transform:translateY(5px)}
+}
+
+
+/* =========================================================
+   CONFUSED
+========================================================= */
+
+.confused .eye:first-child{
+  transform:rotate(-6deg) translateY(-5px);
+}
+
+.confused .eye:last-child{
+  transform:rotate(8deg) translateY(6px);
+}
+
+
+/* =========================================================
+   EXCITED
+========================================================= */
+
+.excited .eye{
+  animation:excited .42s ease-in-out infinite alternate;
+}
+
+@keyframes excited{
+  from{transform:translateY(-5px) scale(1)}
+  to{transform:translateY(5px) scale(1.07)}
+}
+
+
+/* =========================================================
+   SCARED
+========================================================= */
+
+.scared .eye{
+  animation:shake .12s linear infinite;
+}
+
+@keyframes shake{
+  0%{transform:translateX(-4px)}
+  50%{transform:translateX(4px)}
+  100%{transform:translateX(-4px)}
+}
+
+
+/* =========================================================
+   SHY
+========================================================= */
+
+.shy .eye{
+  opacity:.65;
+  transform:scale(.92);
+}
+
+
+/* =========================================================
+   COOL
+========================================================= */
+
+.cool .eye{
+  transform:scaleY(.82);
+}
+
+
+/* =========================================================
+   LISTENING
+========================================================= */
+
+.listening .eye{
+  animation:listen .8s ease-in-out infinite alternate;
+}
+
+@keyframes listen{
+  from{
+    transform:scaleY(.94);
+    filter:brightness(1);
+  }
+
+  to{
+    transform:scaleY(1.08);
+    filter:brightness(1.35);
+  }
+}
+
+
+/* =========================================================
+   SPEAKING
+========================================================= */
+
+.speaking .eye{
+  animation:speak .42s ease-in-out infinite alternate;
+}
+
+@keyframes speak{
+  from{transform:scaleY(.92)}
+  to{transform:scaleY(1.06)}
+}
+
+
+/* =========================================================
+   GREETING
+========================================================= */
+
+.greeting .eye{
+  animation:greeting .7s ease-in-out 2;
+}
+
+@keyframes greeting{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-10px)}
+}
+
+
+/* =========================================================
+   CELEBRATE
+========================================================= */
+
+.celebrate .eye{
+  animation:celebrate .35s ease-in-out infinite alternate;
+}
+
+@keyframes celebrate{
+  from{transform:scale(1)}
+  to{transform:scale(1.12)}
+}
+
+
+/* =========================================================
+   SLEEP
+========================================================= */
+
+.sleep .eye{
+  height:7px;
+  border-radius:10px;
+  opacity:.5;
+}
+
+
+/* =========================================================
+   WAKE
+========================================================= */
+
+.wake .eye{
+  animation:wake .8s ease-out;
+}
+
+@keyframes wake{
+  0%{
+    transform:scaleY(.05);
+    opacity:0;
+  }
+
+  60%{
+    transform:scaleY(1.15);
+    opacity:1;
+  }
+
+  100%{
+    transform:scaleY(1);
+  }
+}
+
+
+/* =========================================================
+   START
+========================================================= */
+
+.starting .eye{
+  transform:scaleY(.05);
+  opacity:0;
+}
+
+
+/* =========================================================
+   SHOCK
+========================================================= */
+
+.shock .eye{
+  animation:shock .25s ease-in-out infinite alternate;
+}
+
+@keyframes shock{
+  from{transform:scale(1)}
+  to{transform:scale(1.12)}
+}
+
+
+/* =========================================================
+   JUST WOKE UP
+========================================================= */
+
+.wakeup-dark .eye{
+  transform:scaleY(.02);
+  opacity:0;
+  filter:brightness(.25);
+}
+
+
+.wakeup-opening .eye{
+  animation:eyesOpening 1.8s cubic-bezier(.2,.8,.2,1) forwards;
+}
+
+@keyframes eyesOpening{
+
+  0%{
+    transform:scaleY(.03);
+    opacity:0;
+  }
+
+  20%{
+    transform:scaleY(.08);
+    opacity:.25;
+  }
+
+  45%{
+    transform:scaleY(.35);
+    opacity:.55;
+  }
+
+  70%{
+    transform:scaleY(.78);
+    opacity:.85;
+  }
+
+  88%{
+    transform:scaleY(1.08);
+    opacity:1;
+  }
+
+  100%{
+    transform:scaleY(1);
+    opacity:1;
+  }
+}
+
+
+.wakeup-sleepy .eye{
+  height:45px;
+  border-radius:30px;
+  opacity:.72;
+  animation:sleepyWake 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes sleepyWake{
+
+  from{
+    transform:translateY(5px);
+  }
+
+  to{
+    transform:translateY(-2px);
+  }
+}
+
+
+.wakeup-blink .eye{
+  height:6px;
+  border-radius:10px;
+  opacity:.8;
+}
+
+
+.wakeup-look-left .eye{
+  transform:translateX(-14px);
+}
+
+
+.wakeup-look-right .eye{
+  transform:translateX(14px);
+}
+
+
+.wakeup-look-up .eye{
+  transform:translateY(-12px);
+}
+
+
+.wakeup-look-down .eye{
+  transform:translateY(12px);
+}
+
+
+.wakeup-ready .eye{
+  animation:wakeupReady 1s ease-out;
+}
+
+@keyframes wakeupReady{
+
+  0%{
+    transform:scaleY(.5);
+    opacity:.5;
+  }
+
+  45%{
+    transform:scaleY(1.12);
+  }
+
+  70%{
+    transform:scaleY(.95);
+  }
+
+  100%{
+    transform:scaleY(1);
+    opacity:1;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:600px){
+
+  .eyes{
+    gap:24px;
+  }
+
+  .eye{
+    border-radius:24px;
+  }
+}
+
+
+@media(max-width:360px){
+
+  .eyes{
+    gap:17px;
+  }
+
+  .eye{
+    width:64px;
+    height:98px;
+  }
+}
+</style>
 </head>
+
 
 <body>
 
-  <main class="face" id="face">
-    <div class="eyes">
-      <div class="eye"></div>
-      <div class="eye"></div>
-    </div>
-  </main>
+<main id="face" class="face">
 
-  <script>
-    const face = document.getElementById("face");
+  <div class="eyes">
 
-    /*
-      Change expression:
-      normal
-      blink
-      happy
-      sad
-      angry
-      surprised
-      sleepy
-      listening
-      thinking
-      speaking
-      excited
-      scared
-    */
+    <div class="eye"></div>
 
-    function setExpression(name, duration = 0) {
-      face.className = "face " + name;
+    <div class="eye"></div>
 
-      if (duration > 0) {
-        setTimeout(() => {
-          setExpression("normal");
-        }, duration);
+  </div>
+
+</main>
+
+
+<script>
+
+/* =========================================================
+   EMO AI COMPANION V3
+========================================================= */
+
+const face =
+  document.getElementById("face");
+
+
+/* Render backend */
+
+const API_URL =
+  "/api/ask";
+
+
+/* Conversation */
+
+const MAX_HISTORY = 14;
+
+let conversationHistory = [];
+
+
+/* States */
+
+let recognition = null;
+
+let microphoneStream = null;
+
+let listening = false;
+
+let speaking = false;
+
+let thinking = false;
+
+let sleeping = false;
+
+let currentMood = "normal";
+
+let moodScore = 0;
+
+let lastInteraction = Date.now();
+
+let blinkTimer = null;
+
+
+/* =========================================================
+   WAIT
+========================================================= */
+
+function wait(ms){
+
+  return new Promise(
+    resolve =>
+      setTimeout(resolve,ms)
+  );
+}
+
+
+/* =========================================================
+   EXPRESSION ENGINE
+========================================================= */
+
+function setExpression(
+  name,
+  duration = 0
+){
+
+  if(!name){
+
+    name = "normal";
+
+  }
+
+
+  currentMood = name;
+
+  face.className =
+    "face " + name;
+
+  lastInteraction =
+    Date.now();
+
+
+  if(duration > 0){
+
+    setTimeout(()=>{
+
+      if(
+        !listening &&
+        !thinking &&
+        !speaking &&
+        !sleeping
+      ){
+
+        setExpression(
+          "normal"
+        );
+
       }
-    }
 
-    /* Start */
-    setExpression("starting");
+    },duration);
+  }
+}
 
-    setTimeout(() => {
-      setExpression("normal");
-    }, 900);
 
-    /* Automatic blinking */
-    function autoBlink() {
-      const delay = 2500 + Math.random() * 3500;
+/* =========================================================
+   NATURAL BLINK ENGINE
+========================================================= */
 
-      setTimeout(() => {
-        if (
-          !face.classList.contains("listening") &&
-          !face.classList.contains("speaking")
-        ) {
-          setExpression("blink");
+function scheduleBlink(){
 
-          setTimeout(() => {
-            setExpression("normal");
-          }, 130);
+  const delay =
+    2200 +
+    Math.random() * 4200;
+
+
+  blinkTimer =
+    setTimeout(()=>{
+
+      if(
+        !listening &&
+        !thinking &&
+        !speaking &&
+        !sleeping
+      ){
+
+        const doubleBlink =
+          Math.random() < .12;
+
+
+        setExpression(
+          doubleBlink
+            ? "longBlink"
+            : "blink"
+        );
+
+
+        setTimeout(()=>{
+
+          if(
+            !listening &&
+            !thinking &&
+            !speaking &&
+            !sleeping
+          ){
+
+            setExpression(
+              "normal"
+            );
+
+          }
+
+        },
+        doubleBlink
+          ? 300
+          : 130);
+      }
+
+
+      scheduleBlink();
+
+    },delay);
+}
+
+
+scheduleBlink();
+
+
+/* =========================================================
+   IDLE BEHAVIOR
+========================================================= */
+
+function randomIdleBehavior(){
+
+  if(
+    listening ||
+    thinking ||
+    speaking ||
+    sleeping
+  ){
+
+    return;
+  }
+
+
+  const idleTime =
+    Date.now() -
+    lastInteraction;
+
+
+  /* Bored after long silence */
+
+  if(idleTime > 45000){
+
+    setExpression(
+      "bored",
+      1800
+    );
+
+    return;
+  }
+
+
+  const r =
+    Math.random();
+
+
+  if(r < .18){
+
+    setExpression(
+      "blink",
+      150
+    );
+
+  }
+  else if(r < .30){
+
+    setExpression(
+      "happy",
+      1000
+    );
+
+  }
+  else if(r < .40){
+
+    setExpression(
+      "thinking",
+      1200
+    );
+
+  }
+  else if(r < .48){
+
+    setExpression(
+      "shy",
+      900
+    );
+
+  }
+  else if(r < .55){
+
+    setExpression(
+      "cool",
+      900
+    );
+  }
+}
+
+
+setInterval(
+  randomIdleBehavior,
+  7000
+);
+
+
+/* =========================================================
+   MICROPHONE
+========================================================= */
+
+async function requestMicrophone(){
+
+  if(
+    !navigator.mediaDevices ||
+    !navigator.mediaDevices.getUserMedia
+  ){
+
+    console.warn(
+      "Microphone API unavailable."
+    );
+
+    return false;
+  }
+
+
+  try{
+
+    microphoneStream =
+      await navigator.mediaDevices
+        .getUserMedia({
+          audio:true,
+          video:false
+        });
+
+
+    return true;
+
+  }catch(error){
+
+    console.warn(
+      "Microphone permission:",
+      error
+    );
+
+
+    setExpression(
+      "sad",
+      1200
+    );
+
+
+    return false;
+  }
+}
+
+
+/* =========================================================
+   SPEECH RECOGNITION
+========================================================= */
+
+const SpeechRecognition =
+  window.SpeechRecognition ||
+  window.webkitSpeechRecognition;
+
+
+function setupRecognition(){
+
+  if(!SpeechRecognition){
+
+    console.warn(
+      "SpeechRecognition is not supported."
+    );
+
+    return false;
+  }
+
+
+  recognition =
+    new SpeechRecognition();
+
+
+  recognition.continuous =
+    true;
+
+  recognition.interimResults =
+    true;
+
+  recognition.maxAlternatives =
+    3;
+
+  recognition.lang =
+    "en-IN";
+
+
+  recognition.onstart =
+    ()=>{
+
+      listening = true;
+
+
+      if(
+        !thinking &&
+        !speaking
+      ){
+
+        setExpression(
+          "listening"
+        );
+
+      }
+    };
+
+
+  recognition.onresult =
+    async(event)=>{
+
+      let finalText = "";
+
+
+      for(
+        let i = event.resultIndex;
+        i < event.results.length;
+        i++
+      ){
+
+        const result =
+          event.results[i];
+
+
+        if(result.isFinal){
+
+          finalText +=
+            result[0].transcript;
         }
-
-        autoBlink();
-      }, delay);
-    }
-
-    autoBlink();
-
-    /* Demo expression cycle */
-    const demoExpressions = [
-      ["happy", 1200],
-      ["surprised", 900],
-      ["thinking", 1300],
-      ["sad", 1000],
-      ["angry", 900],
-      ["excited", 1100],
-      ["normal", 1500]
-    ];
-
-    let demoIndex = 0;
-
-    function demoLoop() {
-      const [expression, duration] =
-        demoExpressions[demoIndex];
-
-      setExpression(expression);
-
-      demoIndex++;
-
-      if (demoIndex >= demoExpressions.length) {
-        demoIndex = 0;
       }
 
-      setTimeout(demoLoop, duration);
+
+      if(finalText.trim()){
+
+        await processVoice(
+          finalText.trim()
+        );
+      }
+    };
+
+
+  recognition.onerror =
+    event=>{
+
+      console.warn(
+        "Speech recognition:",
+        event.error
+      );
+
+
+      listening = false;
+
+
+      if(
+        event.error === "not-allowed" ||
+        event.error === "service-not-allowed"
+      ){
+
+        setExpression(
+          "sad",
+          1500
+        );
+      }
+    };
+
+
+  recognition.onend =
+    ()=>{
+
+      listening = false;
+
+
+      if(
+        !speaking &&
+        !thinking &&
+        !sleeping
+      ){
+
+        setExpression(
+          "normal"
+        );
+      }
+
+
+      if(!sleeping){
+
+        setTimeout(
+          startListening,
+          800
+        );
+      }
+    };
+
+
+  return true;
+}
+
+
+/* =========================================================
+   START LISTENING
+========================================================= */
+
+function startListening(){
+
+  if(
+    !recognition ||
+    listening ||
+    speaking ||
+    thinking ||
+    sleeping
+  ){
+
+    return;
+  }
+
+
+  try{
+
+    recognition.start();
+
+  }catch(error){
+
+    setTimeout(
+      startListening,
+      1200
+    );
+  }
+}
+
+
+/* =========================================================
+   STOP LISTENING
+========================================================= */
+
+function stopListening(){
+
+  if(!recognition){
+
+    return;
+  }
+
+
+  try{
+
+    recognition.stop();
+
+  }catch{}
+
+
+  listening = false;
+}
+
+
+/* =========================================================
+   WAKE WORD
+========================================================= */
+
+const wakeWords = [
+
+  "emo",
+
+  "hey emo",
+
+  "hi emo",
+
+  "hello emo",
+
+  "hey emu"
+
+];
+
+
+function containsWakeWord(text){
+
+  const t =
+    text
+      .toLowerCase()
+      .replace(/[.,!?]/g," ")
+      .replace(/\s+/g," ")
+      .trim();
+
+
+  return wakeWords.some(
+    word =>
+      t.includes(word)
+  );
+}
+
+
+function removeWakeWord(text){
+
+  let result = text;
+
+
+  const lower =
+    result.toLowerCase();
+
+
+  for(
+    const word of wakeWords
+  ){
+
+    const index =
+      lower.indexOf(word);
+
+
+    if(index !== -1){
+
+      result =
+        result
+          .slice(
+            index + word.length
+          )
+          .trim();
+
+
+      break;
+    }
+  }
+
+
+  return result;
+}
+
+
+/* =========================================================
+   VOICE PROCESSOR
+========================================================= */
+
+async function processVoice(text){
+
+  if(!text){
+
+    return;
+  }
+
+
+  console.log(
+    "Heard:",
+    text
+  );
+
+
+  lastInteraction =
+    Date.now();
+
+
+  /* Special commands first */
+
+  if(
+    handleSpecialCommand(text)
+  ){
+
+    return;
+  }
+
+
+  /* Ignore speech without wake word */
+
+  if(
+    !containsWakeWord(text)
+  ){
+
+    return;
+  }
+
+
+  const question =
+    removeWakeWord(text);
+
+
+  /* Only wake word */
+
+  if(!question){
+
+    setExpression(
+      "greeting",
+      1200
+    );
+
+
+    speakText(
+      "Yes, I'm listening.",
+      "en-IN"
+    );
+
+
+    return;
+  }
+
+
+  await askAI(
+    question
+  );
+}
+
+
+/* =========================================================
+   AI REQUEST
+========================================================= */
+
+async function askAI(question){
+
+  if(!question){
+
+    return;
+  }
+
+
+  stopListening();
+
+
+  thinking = true;
+
+
+  setExpression(
+    "thinking"
+  );
+
+
+  conversationHistory.push({
+
+    role:"user",
+
+    text:question
+
+  });
+
+
+  if(
+    conversationHistory.length >
+    MAX_HISTORY
+  ){
+
+    conversationHistory =
+      conversationHistory.slice(
+        -MAX_HISTORY
+      );
+  }
+
+
+  try{
+
+    const response =
+      await fetch(
+        API_URL,
+        {
+          method:"POST",
+
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+
+          body:JSON.stringify({
+
+            message:
+              question,
+
+            history:
+              conversationHistory
+
+          })
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if(!response.ok){
+
+      throw new Error(
+        data.error ||
+        "AI request failed"
+      );
     }
 
-    /* Start demo after initial startup */
-    setTimeout(demoLoop, 2500);
 
-    /*
-      Test from browser console:
+    const answer =
+      String(
+        data.answer ||
+        "I don't know yet."
+      ).trim();
 
-      setExpression("happy", 1500);
-      setExpression("angry", 1500);
-      setExpression("surprised", 1500);
-      setExpression("listening");
-      setExpression("normal");
-    */
-  </script>
+
+    conversationHistory.push({
+
+      role:"assistant",
+
+      text:answer
+
+    });
+
+
+    if(
+      conversationHistory.length >
+      MAX_HISTORY
+    ){
+
+      conversationHistory =
+        conversationHistory.slice(
+          -MAX_HISTORY
+        );
+    }
+
+
+    thinking = false;
+
+
+    const mood =
+      analyzeMood(
+        answer
+      );
+
+
+    changeMood(
+      mood
+    );
+
+
+    speakText(
+      answer,
+
+      detectLanguage(
+        question +
+        " " +
+        answer
+      )
+    );
+
+
+  }catch(error){
+
+    console.error(
+      "AI error:",
+      error
+    );
+
+
+    thinking = false;
+
+
+    changeMood(
+      "sad"
+    );
+
+
+    speakText(
+      "Sorry, I couldn't connect to my AI.",
+      "en-IN"
+    );
+  }
+}
+
+
+/* =========================================================
+   MOOD ANALYZER
+========================================================= */
+
+function analyzeMood(text){
+
+  const t =
+    text.toLowerCase();
+
+
+  if(
+    /haha|funny|lol|joke|laugh/.test(t)
+  ){
+
+    return "laugh";
+  }
+
+
+  if(
+    /amazing|awesome|great|fantastic|wonderful|yay/.test(t)
+  ){
+
+    return "excited";
+  }
+
+
+  if(
+    /sorry|sad|unfortunately|problem/.test(t)
+  ){
+
+    return "sad";
+  }
+
+
+  if(
+    /angry|annoyed|mad/.test(t)
+  ){
+
+    return "angry";
+  }
+
+
+  if(
+    /wow|really|surprising|incredible/.test(t)
+  ){
+
+    return "surprised";
+  }
+
+
+  if(
+    /maybe|perhaps|think|consider/.test(t)
+  ){
+
+    return "thinking";
+  }
+
+
+  if(
+    /what|why|how|which|where/.test(t)
+  ){
+
+    return "thinking";
+  }
+
+
+  return "happy";
+}
+
+
+/* =========================================================
+   MOOD
+========================================================= */
+
+function changeMood(mood){
+
+  if(!mood){
+
+    mood = "normal";
+  }
+
+
+  currentMood =
+    mood;
+
+
+  moodScore++;
+
+
+  setExpression(
+    mood,
+    1600
+  );
+}
+
+
+/* =========================================================
+   LANGUAGE
+========================================================= */
+
+function detectLanguage(text){
+
+  if(
+    /[\u0980-\u09FF]/.test(text)
+  ){
+
+    return "bn-IN";
+  }
+
+
+  return "en-IN";
+}
+
+
+/* =========================================================
+   TEXT TO SPEECH
+========================================================= */
+
+function speakText(
+  text,
+  language="en-IN"
+){
+
+  if(
+    !window.speechSynthesis ||
+    !window.SpeechSynthesisUtterance
+  ){
+
+    startListening();
+
+    return;
+  }
+
+
+  window.speechSynthesis
+    .cancel();
+
+
+  const utterance =
+    new SpeechSynthesisUtterance(
+      text
+    );
+
+
+  utterance.lang =
+    language;
+
+
+  utterance.rate =
+    .94;
+
+
+  utterance.pitch =
+    1.05;
+
+
+  utterance.volume =
+    1;
+
+
+  const voices =
+    window.speechSynthesis
+      .getVoices();
+
+
+  const voice =
+    voices.find(
+      v =>
+        v.lang
+          .toLowerCase()
+          .startsWith(
+            language
+              .split("-")[0]
+              .toLowerCase()
+          )
+    );
+
+
+  if(voice){
+
+    utterance.voice =
+      voice;
+  }
+
+
+  utterance.onstart =
+    ()=>{
+
+      speaking = true;
+
+      setExpression(
+        "speaking"
+      );
+    };
+
+
+  utterance.onend =
+    ()=>{
+
+      speaking = false;
+
+
+      setExpression(
+        "normal"
+      );
+
+
+      setTimeout(
+        startListening,
+        500
+      );
+    };
+
+
+  utterance.onerror =
+    ()=>{
+
+      speaking = false;
+
+
+      setExpression(
+        "normal"
+      );
+
+
+      setTimeout(
+        startListening,
+        500
+      );
+    };
+
+
+  window.speechSynthesis
+    .speak(
+      utterance
+    );
+}
+
+
+/* =========================================================
+   SLEEP ENGINE
+========================================================= */
+
+function checkSleep(){
+
+  if(
+    listening ||
+    speaking ||
+    thinking ||
+    sleeping
+  ){
+
+    return;
+  }
+
+
+  const idle =
+    Date.now() -
+    lastInteraction;
+
+
+  if(
+    idle > 180000
+  ){
+
+    sleeping = true;
+
+
+    setExpression(
+      "sleep"
+    );
+  }
+}
+
+
+setInterval(
+  checkSleep,
+  20000
+);
+
+
+/* =========================================================
+   WAKE FROM SLEEP
+========================================================= */
+
+function wakeEMO(){
+
+  sleeping = false;
+
+
+  lastInteraction =
+    Date.now();
+
+
+  setExpression(
+    "wake",
+    1000
+  );
+}
+
+
+/* =========================================================
+   SPECIAL COMMANDS
+========================================================= */
+
+function handleSpecialCommand(text){
+
+  const t =
+    text.toLowerCase();
+
+
+  if(
+    t.includes("go to sleep")
+  ){
+
+    sleeping = true;
+
+    stopListening();
+
+    setExpression(
+      "sleep"
+    );
+
+    return true;
+  }
+
+
+  if(
+    t.includes("wake up")
+  ){
+
+    wakeEMO();
+
+    setTimeout(
+      startListening,
+      800
+    );
+
+    return true;
+  }
+
+
+  if(
+    t.includes("be happy")
+  ){
+
+    setExpression(
+      "happy",
+      1800
+    );
+
+    return true;
+  }
+
+
+  if(
+    t.includes("be angry")
+  ){
+
+    setExpression(
+      "angry",
+      1800
+    );
+
+    return true;
+  }
+
+
+  if(
+    t.includes("be sleepy")
+  ){
+
+    setExpression(
+      "sleepy",
+      1800
+    );
+
+    return true;
+  }
+
+
+  if(
+    t.includes("surprise me")
+  ){
+
+    setExpression(
+      "surprised",
+      1500
+    );
+
+    return true;
+  }
+
+
+  if(
+    t.includes("celebrate")
+  ){
+
+    setExpression(
+      "celebrate",
+      2000
+    );
+
+    return true;
+  }
+
+
+  return false;
+}
+
+
+/* =========================================================
+   FIRST START — JUST WOKE UP
+========================================================= */
+
+async function bootEMO(){
+
+  console.log(
+    "EMO is waking up..."
+  );
+
+
+  /* -----------------------------------------
+     1. Completely asleep
+  ----------------------------------------- */
+
+  setExpression(
+    "wakeup-dark"
+  );
+
+
+  await wait(700);
+
+
+  /* -----------------------------------------
+     2. Slowly opens eyes
+  ----------------------------------------- */
+
+  setExpression(
+    "wakeup-opening"
+  );
+
+
+  await wait(1900);
+
+
+  /* -----------------------------------------
+     3. Sleepy
+  ----------------------------------------- */
+
+  setExpression(
+    "wakeup-sleepy"
+  );
+
+
+  await wait(900);
+
+
+  /* -----------------------------------------
+     4. First blink
+  ----------------------------------------- */
+
+  setExpression(
+    "wakeup-blink"
+  );
+
+
+  await wait(220);
+
+
+  setExpression(
+    "wakeup-sleepy"
+  );
+
+
+  /* -----------------------------------------
+     5. Looks LEFT
+  ----------------------------------------- */
+
+  await wait(500);
+
+
+  setExpression(
+    "wakeup-look-left"
+  );
+
+
+  await wait(800);
+
+
+  /* -----------------------------------------
+     6. Looks RIGHT
+  ----------------------------------------- */
+
+  setExpression(
+    "wakeup-look-right"
+  );
+
+
+  await wait(800);
+
+
+  /* -----------------------------------------
+     7. Looks UP
+  ----------------------------------------- */
+
+  setExpression(
+    "wakeup-look-up"
+  );
+
+
+  await wait(650);
+
+
+  /* -----------------------------------------
+     8. Looks DOWN
+  ----------------------------------------- */
+
+  setExpression(
+    "wakeup-look-down"
+  );
+
+
+  await wait(650);
+
+
+  /* -----------------------------------------
+     9. Second blink
+  ----------------------------------------- */
+
+  setExpression(
+    "wakeup-blink"
+  );
+
+
+  await wait(220);
+
+
+  /* -----------------------------------------
+     10. Fully wakes
+  ----------------------------------------- */
+
+  setExpression(
+    "wakeup-ready"
+  );
+
+
+  await wait(1000);
+
+
+  /* -----------------------------------------
+     11. Little happy reaction
+  ----------------------------------------- */
+
+  setExpression(
+    "happy"
+  );
+
+
+  await wait(1100);
+
+
+  /* -----------------------------------------
+     12. Normal
+  ----------------------------------------- */
+
+  setExpression(
+    "normal"
+  );
+
+
+  /* -----------------------------------------
+     13. Request microphone
+  ----------------------------------------- */
+
+  await requestMicrophone();
+
+
+  /* -----------------------------------------
+     14. Setup speech recognition
+  ----------------------------------------- */
+
+  const ready =
+    setupRecognition();
+
+
+  if(!ready){
+
+    setExpression(
+      "sad"
+    );
+
+    return;
+  }
+
+
+  /* -----------------------------------------
+     15. Start listening
+  ----------------------------------------- */
+
+  setTimeout(
+    startListening,
+    1000
+  );
+}
+
+
+/* =========================================================
+   TOUCH / SCREEN WAKE
+========================================================= */
+
+document.addEventListener(
+  "pointerdown",
+  ()=>{
+
+    lastInteraction =
+      Date.now();
+
+
+    if(sleeping){
+
+      wakeEMO();
+
+    }
+
+  },
+  {
+    passive:true
+  }
+);
+
+
+/* =========================================================
+   PAGE VISIBILITY
+========================================================= */
+
+document.addEventListener(
+  "visibilitychange",
+  ()=>{
+
+    if(
+      document.hidden
+    ){
+
+      if(recognition){
+
+        try{
+
+          recognition.stop();
+
+        }catch{}
+      }
+
+
+      if(
+        window.speechSynthesis
+      ){
+
+        window.speechSynthesis
+          .cancel();
+      }
+
+
+      listening = false;
+
+      speaking = false;
+
+
+    }else{
+
+      sleeping = false;
+
+
+      setExpression(
+        "wake",
+        900
+      );
+
+
+      setTimeout(
+        startListening,
+        1000
+      );
+    }
+  }
+);
+
+
+/* =========================================================
+   SPEECH VOICES
+========================================================= */
+
+if(
+  window.speechSynthesis
+){
+
+  window.speechSynthesis
+    .onvoiceschanged =
+    ()=>{
+      window.speechSynthesis
+        .getVoices();
+    };
+}
+
+
+/* =========================================================
+   PUBLIC EMO API
+========================================================= */
+
+window.EMO = {
+
+  expression:
+    setExpression,
+
+  ask:
+    askAI,
+
+  speak:
+    speakText,
+
+  listen:
+    startListening,
+
+  stop:
+    stopListening,
+
+  wake:
+    wakeEMO,
+
+  mood:
+    changeMood
+
+};
+
+
+/* =========================================================
+   START
+========================================================= */
+
+window.addEventListener(
+  "load",
+  bootEMO
+);
+
+</script>
 
 </body>
 </html>
